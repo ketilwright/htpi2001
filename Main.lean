@@ -1,7 +1,7 @@
 
 import HTPILib.IntroLean
 import HTPILib.Chap7
---import Library.Basic --collision with ⊈ notation between HTPIwL & Math2001
+-- import Library.Basic --collision with ⊈ notation between HTPIwL & Math2001
 import Library.Tactic.Numbers.Basic
 import Library.Tactic.Cancel
 import Library.Tactic.Exhaust
@@ -79,7 +79,7 @@ example {k : ℕ} : k ^ 2 ≤ 6 ↔ k = 0 ∨ k = 1 ∨ k = 2 := by
     by_contra h3
     push_neg at h3 -- works better than demorgan when there's more than one disjunction
     obtain ⟨h4: k ≠ 0, h5: k ≠ 1, h6: k ≠ 2⟩ := h3
-    have h7: k ≠ 0 → k ≥ 1 := by intro _; apply Nat.one_le_iff_ne_zero.mpr h4
+    have h7: k ≠ 0 → k ≥ 1 := by intro _; apply Nat.one_le_iff_ne_zero.rtl h4
     have h8: k > 1 ∨ k = 1 := LE.le.gt_or_eq (h7 h4)
     disj_syll h8 h5
     have h10: k = 2 :=  Nat.eq_of_le_of_lt_succ h8 h2
