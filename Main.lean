@@ -1,16 +1,17 @@
 
 import HTPILib.IntroLean
 import HTPILib.Chap7
--- import Library.Basic
+--import Library.Basic --collision with ⊈ notation between HTPIwL & Math2001
 import Library.Tactic.Numbers.Basic
 import Library.Tactic.Cancel
+import Library.Tactic.Exhaust
 import Library.Tactic.Extra.Basic
+import Library.Tactic.Induction
 -- TODO: some sort of "master" import might be useful
 set_option pp.funBinderTypes true
 set_option linter.unusedVariables false
 
---math2001_init
--- math2001_init()
+-- From HTPIwL
 theorem Exercise_3_2_1a (P Q R : Prop)
     (h1 : P → Q) (h2 : Q → R) : P → R := by
   assume h3: P
@@ -74,11 +75,21 @@ example {k : ℕ} : k ^ 2 ≤ 6 ↔ k = 0 ∨ k = 1 ∨ k = 2 := by
         _ ≤ 6 := h1
         _ < 3 ^ 2 := by linarith /- notin MOP, but HTPI makes avail-/
     cancel 2 at h2 -- or lt_of_pow_lt_pow in htpi
+    -- suppose k ∉ {0, 1, 2}
+    by_contra h3
+    push_neg at h3 -- works better than demorgan when there's more than one disjunction
+    obtain ⟨h4, h5, h6⟩ := h3
+    have h8: k ≠ 0 → k ≥ 1 := by intro _; apply Nat.one_le_iff_ne_zero.mpr h4
+    have h9: k > 1 ∨ k = 1 := LE.le.gt_or_eq (h8 h4)
+    disj_syll h9 h5
+    have h10: k = 2 :=  Nat.eq_of_le_of_lt_succ h9 h2
+    contradiction
+
     -- interval_cases is slick but opaque
-    interval_cases k
-    or_left; rfl
-    or_right; or_left; rfl
-    right; right; ring
+    -- interval_cases k
+    -- or_left; rfl
+    -- or_right; or_left; rfl
+    -- right; right; ring
   ·
     assume h3: k = 0 ∨ k = 1 ∨ k = 2
     obtain (k0: k = 0) | (k1: k = 1) | (k2: k = 2) := h3
