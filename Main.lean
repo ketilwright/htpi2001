@@ -78,12 +78,12 @@ example {k : ℕ} : k ^ 2 ≤ 6 ↔ k = 0 ∨ k = 1 ∨ k = 2 := by
     -- suppose k ∉ {0, 1, 2}
     by_contra h3
     push_neg at h3 -- works better than demorgan when there's more than one disjunction
-    obtain ⟨h4, h5, h6⟩ := h3
-    have h8: k ≠ 0 → k ≥ 1 := by intro _; apply Nat.one_le_iff_ne_zero.mpr h4
-    have h9: k > 1 ∨ k = 1 := LE.le.gt_or_eq (h8 h4)
-    disj_syll h9 h5
-    have h10: k = 2 :=  Nat.eq_of_le_of_lt_succ h9 h2
-    contradiction
+    obtain ⟨h4: k ≠ 0, h5: k ≠ 1, h6: k ≠ 2⟩ := h3
+    have h7: k ≠ 0 → k ≥ 1 := by intro _; apply Nat.one_le_iff_ne_zero.mpr h4
+    have h8: k > 1 ∨ k = 1 := LE.le.gt_or_eq (h7 h4)
+    disj_syll h8 h5
+    have h10: k = 2 :=  Nat.eq_of_le_of_lt_succ h8 h2
+    show False from absurd h10 h6
 
     -- interval_cases is slick but opaque
     -- interval_cases k
